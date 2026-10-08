@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// Rules for the Firebase project shared by Twin Track and Pump Track.
+// Only the Google accounts listed below can read or change either log.
+// This file is a template: the real email list lives only in the Firebase console
+// (Firestore Database → Rules), so the addresses aren't stored in the repo.
+// Replace the placeholders there, not here, then Publish.
+// Keep both apps' collections in here: publishing rules without one locks that app out.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isFamily() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'parent.one@example.com',
+          'parent.two@example.com'
+        ];
+    }
+
+    // Twin Track
+    match /events/{eventId} {
+      allow read, write: if isFamily();
+    }
+
+    // Pump Track
+    match /pumps/{pumpId} {
+      allow read, write: if isFamily();
+    }
+
+    // Shared settings for both apps (Twin Track's babies, Pump Track's daily goal)
+    match /config/{docId} {
+      allow read, write: if isFamily();
+    }
+  }
+}

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pump Track</title>
+  <meta name="description" content="A sweet little log for pumping sessions.">
+  <meta name="theme-color" content="#fff0f6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1e1424" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Pump Track">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1><img src="icons/icon.svg" alt="" width="30" height="30"> Pump Track <span id="offline" class="pill" hidden>Offline · will sync</span></h1>
+    <button id="settings-btn" class="icon-btn" aria-label="Settings">⚙︎</button>
+  </header>
+
+  <main>
+    <section id="hero" class="hero" aria-label="Pumping at a glance"></section>
+
+    <section class="history">
+      <div class="history-head">
+        <h2>History</h2>
+        <div id="view" class="seg small" role="group" aria-label="View">
+          <button type="button" data-view="today">Today</button>
+          <button type="button" data-view="week">Last 7 days</button>
+        </div>
+      </div>
+      <div id="history-content"></div>
+    </section>
+  </main>
+
+  <!-- Add / edit a pump -->
+  <dialog id="entry-dialog">
+    <form id="entry-form" method="dialog">
+      <h2 id="entry-title">Log a pump</h2>
+
+      <div class="field">
+        <label for="amount"><span>Amount (<span class="unit-label">ml</span>)</span></label>
+        <div class="stepper">
+          <button type="button" data-step="-1" aria-label="Less">−</button>
+          <input id="amount" type="number" inputmode="decimal" min="0">
+          <button type="button" data-step="1" aria-label="More">+</button>
+        </div>
+        <div class="amount-presets" id="amount-presets"></div>
+      </div>
+
+      <label class="field">
+        <span>Minutes pumping</span>
+        <input id="minutes" type="number" inputmode="numeric" min="0" step="1" placeholder="Optional">
+      </label>
+
+      <div class="field">
+        <span>Time</span>
+        <div class="time-row">
+          <select id="time-day" aria-label="Day"></select>
+          <select id="time-clock" aria-label="Time"></select>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Note</span>
+        <input id="note" type="text" placeholder="Optional" maxlength="200">
+      </label>
+
+      <div class="actions">
+        <button type="button" id="delete-btn" class="btn danger" hidden>Delete</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Settings -->
+  <dialog id="settings-dialog">
+    <form id="settings-form" method="dialog">
+      <h2>Settings</h2>
+
+      <fieldset>
+        <legend>Units</legend>
+        <div class="seg" data-field="unit">
+          <button type="button" data-value="ml">ml</button>
+          <button type="button" data-value="oz">oz</button>
+        </div>
+      </fieldset>
+
+      <label class="field">
+        <span>Daily goal (<span class="unit-label">ml</span>)</span>
+        <input id="goal" type="number" inputmode="decimal" min="0" placeholder="Optional">
+      </label>
+
+      <fieldset id="account" hidden>
+        <legend>Account</legend>
+        <p class="hint" id="account-email"></p>
+        <button type="button" class="btn secondary" id="signout-btn">Sign out</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Data</legend>
+        <p class="hint" id="storage-hint">Entries are saved only on this device. Export a backup now and then.</p>
+        <p class="hint">App version <span id="app-version"></span></p>
+        <div class="data-btns">
+          <button type="button" class="btn secondary" id="export-json">Export backup</button>
+          <button type="button" class="btn secondary" id="import-json">Import backup</button>
+          <button type="button" class="btn secondary" id="export-csv">Export CSV</button>
+          <button type="button" class="btn danger" id="clear-data">Erase all</button>
+        </div>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </fieldset>
+
+      <div class="actions">
+        <span class="spacer"></span>
+        <button type="submit" class="btn primary">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Shown in cloud mode until a family member signs in -->
+  <div id="gate" class="gate" hidden>
+    <div class="gate-card">
+      <img src="icons/icon.svg" alt="" width="84" height="84">
+      <h2>Pump Track</h2>
+      <p id="gate-msg"></p>
+      <button type="button" id="signin-btn" class="btn primary">Sign in with Google</button>
+      <button type="button" id="switch-btn" class="btn secondary" hidden>Use a different account</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

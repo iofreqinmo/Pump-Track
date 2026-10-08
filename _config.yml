@@ -1,0 +1,6 @@
+# GitHub Pages builds this repo with Jekyll. Keep repo-only files off the public site.
+exclude:
+  - README.md
+  - SETUP-FIREBASE.md
+  - firestore.rules
+  - scripts

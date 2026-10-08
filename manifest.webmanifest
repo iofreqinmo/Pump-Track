@@ -1,0 +1,15 @@
+{
+  "name": "Pump Track",
+  "short_name": "Pump Track",
+  "description": "A sweet little log for pumping sessions.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff0f6",
+  "theme_color": "#e9558f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
