@@ -99,6 +99,14 @@
       <fieldset id="account" hidden>
         <legend>Account</legend>
         <p class="hint" id="account-email"></p>
+        <div id="code-maker">
+          <button type="button" class="btn secondary" id="make-code-btn">Sign in the home-screen app</button>
+          <div id="code-box" class="code-box" hidden>
+            <p class="hint">Copy this code, open the home-screen app and tap <b>Paste code &amp; sign in</b>. It works for an hour; don't share it.</p>
+            <textarea id="code-output" rows="3" readonly aria-label="Sign-in code"></textarea>
+            <button type="button" class="btn primary" id="copy-code-btn">Copy code</button>
+          </div>
+        </div>
         <button type="button" class="btn secondary" id="signout-btn">Sign out</button>
       </fieldset>
 
@@ -128,6 +136,15 @@
       <img src="icons/icon.svg" alt="" width="84" height="84">
       <h2>Pump Track</h2>
       <p id="gate-msg"></p>
+      <div id="code-signin" class="code-signin" hidden>
+        <ol class="steps">
+          <li>Open Pump Track in <b>Safari</b> and sign in there.</li>
+          <li>Tap <b>⚙︎</b>, then <b>Sign in the home-screen app</b>, and copy the code.</li>
+          <li>Come back here and tap <b>Paste code &amp; sign in</b>.</li>
+        </ol>
+        <button type="button" id="paste-code-btn" class="btn primary">Paste code &amp; sign in</button>
+        <textarea id="code-input" rows="2" placeholder="…or long-press here to paste the code" aria-label="Sign-in code"></textarea>
+      </div>
       <button type="button" id="signin-btn" class="btn primary">Sign in with Google</button>
       <button type="button" id="switch-btn" class="btn secondary" hidden>Use a different account</button>
     </div>

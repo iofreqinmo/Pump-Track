@@ -49,7 +49,7 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-button, input, select { font: inherit; color: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
 .topbar {
@@ -107,6 +107,11 @@ button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .gate-card h2 { margin: 0; font-size: 1.6rem; font-weight: 800; }
 .gate-card p { margin: 0 0 8px; color: var(--muted); }
 .gate-card .btn { width: 100%; }
+.code-signin { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.steps { margin: 0 0 4px; padding-left: 1.4em; text-align: left; color: var(--text); font-size: 0.92rem; line-height: 1.5; }
+textarea { resize: none; font-size: 0.8rem; word-break: break-all; }
+#code-maker, .code-box { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+.code-box { width: 100%; align-items: stretch; }
 
 .icon-btn {
   border: 0;
@@ -335,7 +340,7 @@ dialog h2 { margin: 0; font-size: 1.3rem; font-weight: 800; }
 fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 legend, .field > span, .field > label > span { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 700; padding: 0; margin-bottom: 6px; }
 .field { display: flex; flex-direction: column; }
-input[type="number"], input[type="text"], select {
+input[type="number"], input[type="text"], select, textarea {
   border: 1.5px solid var(--border);
   background: var(--surface-2);
   border-radius: 14px;

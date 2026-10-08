@@ -1,7 +1,7 @@
 'use strict';
 
 // Keep in step with CACHE in sw.js; shown in Settings so you can tell which version is running.
-const APP_VERSION = 1;
+const APP_VERSION = 2;
 const STORAGE_KEY = 'pumptrack.v1';
 const ML_PER_OZ = 29.5735;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -513,6 +513,10 @@ const BATCH_LIMIT = 450; // Firestore allows 500 writes per batch
 const COLLECTION = 'pumps';
 const SHARED_SETTINGS = ['config', 'pump']; // the daily goal, shared between phones
 
+// iPhone home-screen apps can't complete Google's sign-in window, so they sign in with a
+// one-time code copied from Safari instead (a Google ID token, good for an hour).
+const STANDALONE = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+
 const cloud = { config: window.FIREBASE_CONFIG || null, fb: null, auth: null, db: null, user: null, unsubs: [] };
 
 function chunks(list, size) {
@@ -573,12 +577,17 @@ function syncError(err) {
 function showGate(kind, detail) {
   const email = detail || cloud.user?.email || 'This account';
   const messages = {
-    signin: 'Sign in with your Google account to see and add to your pumping log.',
+    signin: STANDALONE
+      ? 'Sign in to see and add to your pumping log. On iPhone, the home-screen app signs in with a code from Safari:'
+      : 'Sign in with your Google account to see and add to your pumping log.',
     denied: `${email} isn't on the family list. Ask whoever set up Pump Track to add it, or use a different account.`,
     error: `Sign-in didn't work: ${detail}`,
   };
   $('#gate-msg').textContent = messages[kind];
   $('#signin-btn').hidden = kind === 'denied';
+  $('#code-signin').hidden = !STANDALONE || kind === 'denied';
+  // In the home-screen app the code is the way in; the Google button stays for Android.
+  $('#signin-btn').className = `btn ${STANDALONE ? 'secondary' : 'primary'}`;
   $('#switch-btn').hidden = kind !== 'denied';
   $('#gate').hidden = false;
 }
@@ -587,6 +596,7 @@ function renderAccount() {
   const signedIn = !!(cloud.db && cloud.user);
   $('#account').hidden = !signedIn;
   if (signedIn) $('#account-email').textContent = `Signed in as ${cloud.user.email}`;
+  $('#code-maker').hidden = STANDALONE;
   $('#storage-hint').textContent = signedIn
     ? 'Pumps sync to everyone signed in to the family log.'
     : 'Pumps are saved only on this device. Export a backup now and then.';
@@ -610,6 +620,59 @@ async function signIn() {
     if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
       showGate('error', err.code || err.message);
     }
+  }
+}
+
+// In Safari: sign in again to get a fresh Google ID token to hand to the home-screen app.
+async function makeHomeScreenCode() {
+  const { GoogleAuthProvider, signInWithPopup } = cloud.fb;
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ login_hint: cloud.user?.email || '' });
+  try {
+    const result = await signInWithPopup(cloud.auth, provider);
+    const idToken = GoogleAuthProvider.credentialFromResult(result)?.idToken;
+    if (!idToken) throw new Error('Google did not send back a code');
+    $('#code-output').value = idToken;
+    $('#code-box').hidden = false;
+  } catch (err) {
+    if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+      toast(`Couldn't make a code: ${err.code || err.message}`);
+    }
+  }
+}
+
+async function copyCode() {
+  const box = $('#code-output');
+  try {
+    await navigator.clipboard.writeText(box.value);
+  } catch {
+    box.select();
+    document.execCommand('copy');
+  }
+  toast('Code copied. Now open the home-screen app.');
+}
+
+// In the home-screen app: sign in with the code copied from Safari.
+async function signInWithCode() {
+  let code = $('#code-input').value.trim();
+  if (!code) {
+    try {
+      code = (await navigator.clipboard.readText()).trim();
+    } catch {
+      // Clipboard reading refused; the text box is the fallback.
+    }
+  }
+  if (!code) {
+    toast('Copy the code in Safari first, or paste it into the box');
+    return;
+  }
+  const { GoogleAuthProvider, signInWithCredential } = cloud.fb;
+  try {
+    await signInWithCredential(cloud.auth, GoogleAuthProvider.credential(code));
+    $('#code-input').value = '';
+  } catch (err) {
+    console.error('Code sign-in failed', err);
+    showGate('error', 'that code has expired or was cut off. Make a new one in Safari and try again.');
   }
 }
 
@@ -825,6 +888,9 @@ $('#clear-data').addEventListener('click', async () => {
 });
 
 $('#signin-btn').addEventListener('click', signIn);
+$('#paste-code-btn').addEventListener('click', signInWithCode);
+$('#make-code-btn').addEventListener('click', makeHomeScreenCode);
+$('#copy-code-btn').addEventListener('click', copyCode);
 $('#switch-btn').addEventListener('click', () => cloud.fb.signOut(cloud.auth).then(signIn));
 $('#signout-btn').addEventListener('click', () => {
   if (!confirm('Sign out? You will need to sign in again to see the family log.')) return;

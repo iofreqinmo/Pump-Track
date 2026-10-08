@@ -26,8 +26,13 @@ Everyone signed in sees the same pumps within a second or two. Pumps logged with
 
 If the app says your account "isn't on the family list", the rules from step 1 haven't been published yet, or the email isn't in the list.
 
-### If sign-in doesn't work from the home-screen app
-Some iPhones block the Google sign-in window inside home-screen apps. If that happens, delete the home-screen icon, sign in once in Safari, and then re-add it to the home screen from Safari.
+### Signing in the iPhone home-screen app
+On iPhone, the home-screen app can't complete Google's sign-in window, and it doesn't share Safari's sign-in. So it signs in with a one-time code instead:
+1. Open the app in **Safari** and sign in with Google.
+2. Tap **⚙︎ → Sign in the home-screen app**, pick your account again, and tap **Copy code**.
+3. Open the home-screen app and tap **Paste code & sign in** (allow the paste when iOS asks).
+
+The code is good for an hour, and the home-screen app stays signed in after that. Each phone only needs to do this once.
 
 ## Later: changing the rules for Twin Track
 Both apps share one set of rules. When you edit them, keep both the `events` and `pumps` blocks, or the app you left out will stop working.

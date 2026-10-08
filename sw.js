@@ -1,5 +1,5 @@
 // Bump CACHE when shipping changes so phones pick up the new version.
-const CACHE = 'pumptrack-v1';
+const CACHE = 'pumptrack-v2';
 const ASSETS = [
   './',
   'index.html',
