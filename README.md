@@ -24,6 +24,6 @@ Either way the app keeps a copy on the phone, so it opens instantly and works of
 It's plain HTML/CSS/JS with no build step.
 
 - **Locally:** run `python3 -m http.server` in this folder, then open http://localhost:8000.
-- **On your phone:** turn on GitHub Pages under repo **Settings → Pages**, choosing the `main` branch and `/ (root)`. The app will be at https://iofreqinmo.github.io/pump-track/. Open it on your phone, then use **Share → Add to Home Screen** (iOS) or **Install app** (Android).
+- **On your phone:** turn on GitHub Pages under repo **Settings → Pages**, choosing the `main` branch and `/ (root)`. The app will be at https://iofreqinmo.github.io/Pump-Track/ (the capital letters matter). Open it on your phone, then use **Share → Add to Home Screen** (iOS) or **Install app** (Android).
 
 When you change files, bump `CACHE` in `sw.js` and `APP_VERSION` in `app.js`. `vendor/firebase.js` is a bundled copy of the Firebase SDK; rebuild it with `scripts/build-firebase.sh`. Installed copies check for updates whenever they are opened and reload themselves.
